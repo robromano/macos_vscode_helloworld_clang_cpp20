@@ -1,0 +1,31 @@
+language: cpp
+
+matrix:
+  include:
+    #
+    # Mac OS builds
+    #
+    - os: osx
+      osx_image: xcode11
+      env: COMPILER=clang++ CPP_VER=17
+    - os: osx
+      osx_image: xcode10.2
+      env: COMPILER=clang++ CPP_VER=17
+
+install:
+  - DEPS_DIR="${HOME}/deps"
+  - mkdir -p ${DEPS_DIR} && cd ${DEPS_DIR}
+
+  - if [[ "${COMPILER}" != "" ]]; then export CXX=${COMPILER}; fi
+  - ${CXX} --version
+  
+before_script:
+  - cd $TRAVIS_BUILD_DIR
+  - mkdir -p -v build
+  - cd build
+  - cmake .. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=$COMPILER
+
+script:
+  - cmake --build . -- -j2
+
+
